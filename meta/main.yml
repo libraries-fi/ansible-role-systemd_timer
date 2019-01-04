@@ -1,0 +1,7 @@
+galaxy_info:
+  author: Libraries.fi
+  description: Create systemd timers and services.
+  license: MIT
+  min_ansible_version: 2.4
+
+dependencies: []

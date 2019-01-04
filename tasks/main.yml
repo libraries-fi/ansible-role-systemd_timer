@@ -1,0 +1,42 @@
+---
+- name: Ensure that the directory for job scripts exists.
+  file:
+    path: "{{ systemd_timer_job_dir }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+
+- name: Install wrapper script for jobs defined inline.
+  template:
+    src: jobs.sh.j2
+    dest: "{{ systemd_timer_job_dir }}/{{ item.name }}.sh"
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+    validate: "bash -n %s"
+  loop: "{{ systemd_timer_jobs }}"
+  when: item.job is defined
+
+- name: "Install services."
+  template:
+    src: service.service.j2
+    dest: "/etc/systemd/system/{{ item.name }}.service"
+  loop: "{{ systemd_timer_jobs }}"
+  notify:
+    - restart timer
+
+- name: "Install timers."
+  template:
+    src: timer.timer.j2
+    dest: "/etc/systemd/system/{{ item.name }}.timer"
+  loop: "{{ systemd_timer_jobs }}"
+  notify:
+    - restart timer
+
+- name: "Enable timers."
+  systemd:
+    name: "{{ item.name }}.timer"
+    daemon_reload: yes
+    enabled: yes
+  loop: "{{ systemd_timer_jobs }}"

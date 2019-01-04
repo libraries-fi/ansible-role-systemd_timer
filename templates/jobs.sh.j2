@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# {{ ansible_managed }}
+
+# Check last command status for erros and log them.
+check_err() {
+    local status=$?
+    if [ $status -ne 0 ]; then
+        printf "<3>Job \"%s\" exited with status %s\n" "$1" "$status" 1>&2
+        exit 1
+    fi
+}
+
+# Save command stdout to out.
+out=$(
+    {% for line in item.job %}
+    {{ line }} 2>&1
+    check_err "{{ line }}"
+    {% endfor %}
+)
+
+# If some command failed in subshell, print its ouput.
+if [ $? -ne 0 ]; then
+    printf "%s \n" "$out"
+    exit 1
+fi
