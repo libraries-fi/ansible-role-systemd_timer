@@ -9,21 +9,21 @@ Wants={{ item.name }}.timer
 {% if item.restart is defined %}
 StartLimitInterval={{ item.restart.interval * (item.restart.tries + 1) }}
 StartLimitBurst={{ item.restart.tries }}
-{%- endif %}
+{% endif %}
 
 [Service]
 ExecStart={{ item.exec_start | default(systemd_timer_job_dir ~ '/' ~ item.name ~ '.sh') }}
 WorkingDirectory={{ item.working_directory | default(systemd_timer_job_dir) }}
-{% if item.user is defined %}}
+{% if item.user is defined %}
 User={{ item.user }}
-{%- endif %}
+{% endif %}
 DynamicUser={{ item.dynamic_user | default(False) | lower }}
 RuntimeMaxSec={{ item.runtime_max_sec | default('infinity') }}
 
 {% if item.restart is defined %}
 Restart=on-failure
 RestartSec={{ item.restart.interval }}
-{%- endif %}
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target
