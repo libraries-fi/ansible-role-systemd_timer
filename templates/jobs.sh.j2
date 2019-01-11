@@ -14,7 +14,7 @@ check_err() {
 out=$(
     {% for line in item.job %}
     {{ line }} 2>&1
-    check_err "{{ line }}"
+    check_err {{ loop.index }}
     {% endfor %}
 )
 
