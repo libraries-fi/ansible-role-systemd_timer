@@ -1,6 +1,1 @@
 ---
-- name: restart timer
-  service:
-    name: "{{ item.name }}.timer"
-    state: restarted
-  loop: "{{ systemd_timer_jobs }}"

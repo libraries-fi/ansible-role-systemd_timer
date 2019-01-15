@@ -23,20 +23,17 @@
     src: service.service.j2
     dest: "/etc/systemd/system/{{ item.name }}.service"
   loop: "{{ systemd_timer_jobs }}"
-  notify:
-    - restart timer
 
 - name: "Install timers."
   template:
     src: timer.timer.j2
     dest: "/etc/systemd/system/{{ item.name }}.timer"
   loop: "{{ systemd_timer_jobs }}"
-  notify:
-    - restart timer
 
 - name: "Enable timers."
   systemd:
     name: "{{ item.name }}.timer"
     daemon_reload: yes
     enabled: yes
+    state: restarted
   loop: "{{ systemd_timer_jobs }}"
