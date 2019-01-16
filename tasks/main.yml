@@ -35,5 +35,5 @@
     name: "{{ item.name }}.timer"
     daemon_reload: yes
     enabled: yes
-    state: restarted
+    state: started
   loop: "{{ systemd_timer_jobs }}"
