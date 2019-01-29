@@ -30,6 +30,14 @@
     dest: "/etc/systemd/system/{{ item.name }}.timer"
   loop: "{{ systemd_timer_jobs }}"
 
+# Ansible systemd module doesn't support reenable, so disable and enable all timers.
+- name: "Disable timers."
+  systemd:
+    name: "{{ item.name }}.timer"
+    daemon_reload: yes
+    enabled: false
+  loop: "{{ systemd_timer_jobs }}"
+
 - name: "Enable timers."
   systemd:
     name: "{{ item.name }}.timer"
